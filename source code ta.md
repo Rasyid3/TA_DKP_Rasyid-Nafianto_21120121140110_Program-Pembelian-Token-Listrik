@@ -1,6 +1,6 @@
-# taDKP22
-
+import javax.script.Bindings;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.print.PrinterException;
 import java.util.Random;
 import java.util.logging.Level;
@@ -48,7 +48,7 @@ public class TugasAkhirDkp extends javax.swing.JFrame{
         setTitle("Program Pembelian Token Listrik");
         setBackground(new java.awt.Color(102, 255, 255));
         setResizable(false);
-        //setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("imagesthun.png")));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("imagesthun.png")));
 
         jPanel1.setBackground(new java.awt.Color(204, 255, 255));
 
@@ -182,9 +182,9 @@ public class TugasAkhirDkp extends javax.swing.JFrame{
         );
         pack();
     }
-    String idp;
+    String kp,kb;
     double hasil,harga,ppj,pp;
-    int nominal,angk;
+    int idp,nominal,angk;
 
     public void cetak(){
         String idp = textid.getText();
@@ -203,34 +203,58 @@ public class TugasAkhirDkp extends javax.swing.JFrame{
         textout.setText(textout.getText() + "ID Pelanggan         : " + idp + "\n");
         textout.setText(textout.getText() + "Nominal                 : Rp. " + nominal + "\n");
         textout.setText(textout.getText() + "KWh yang didapat : " + hasil + " KWh \n");
-        textout.setText(textout.getText() + "Kode Pembayaran : RA" + angk + idp);
+        textout.setText(textout.getText() + "Kode Pembayaran : " + kb );
         textout.setText(textout.getText() + "\n");
         textout.setText(textout.getText() + "\nSegera selesaikan pembayaran lewat kasir\n");
         textout.setText(textout.getText() + "atau transfer bank dengan cara masukkan\n");
         textout.setText(textout.getText() + "kode pembayaran\n");
     }
 
-    private void buttonokeActionPerformed(java.awt.event.ActionEvent evt) {
-        idp = textid.getText();
-        nominal = Integer.parseInt(textnom.getText());
+    public void gagal(){
+        textout.setText(textout.getText() + "\n");
+        textout.setText(textout.getText() + "\nTransaksi Gagal, coba periksa kembali\n");
+        textout.setText(textout.getText() + "transaksi anda\n");
+        buttonprint.setEnabled(false);
 
-        if (nominal >= 100000) {
-            harga = 1300;
-        }
-        else if (nominal >= 50000) {
-            harga = 1400;
-        }
-        else {
-            harga = 1500;
-        }
-        pp = nominal / 50;
-        ppj = nominal - pp;
-        hasil = ppj / harga;
-        Random random = new Random();
-        angk = 0;
-        angk = random.nextInt(1000);
+    }
 
-        cetak();
+    private void buttonokeActionPerformed(ActionEvent evt) {
+        textout.setText("");
+        if (textnama.getText().equals("")) {
+            gagal();
+        }
+        else if (textid.getText().equals("")) {
+            gagal();
+        }
+        else if (textnom.getText().equals("")) {
+            gagal();
+        }
+        else{
+            idp = Integer.parseInt(textid.getText());
+            nominal = Integer.parseInt(textnom.getText());
+            Random random = new Random();
+            angk = 0;
+            angk = random.nextInt(1000);
+            kp = Integer.toString(angk);
+            kb = "RA" + kp + idp;
+
+            if (nominal >= 100000) {
+                buttonprint.setEnabled(true);
+                harga = 1300; }
+            else if (nominal >= 50000) {
+                buttonprint.setEnabled(true);
+                harga = 1400; }
+            else if (nominal >= 1) {
+                buttonprint.setEnabled(true);
+                harga = 1500; }
+            else {
+                kb = "Gagal mencetak kode, periksa kembali transaksi anda";
+                buttonprint.setEnabled(false); }
+            pp = nominal / 50;
+            ppj = nominal - pp;
+            hasil = ppj / harga;
+            cetak();
+        }
     }
 
     private void buttonprintActionPerformed(java.awt.event.ActionEvent evt) {
